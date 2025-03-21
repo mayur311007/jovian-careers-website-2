@@ -1,34 +1,49 @@
 from flask import Flask, render_template, jsonify
 import mysql.connector
-import mysql
 
 app = Flask(__name__)
 
-# Connect to MySQL database
-con = mysql.connector.connect(
-    host="localhost", user="mayur", password="", database="joviancreers")
-cmd = con.cursor(cursor_class=mysql.connector.cursor.MySQLCursorDict)  # Ensure results are returned as dictionaries
-cmd.execute("SELECT * FROM jobs")
-data = cmd.fetchall()
-con.close()
-
-# Convert database rows into a list of job dictionaries
-jobs = []
-for row in data:
-    print("row", row)
-    jobs.append(row)
+# Database Connection Function
+def get_db_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="mayur",
+        password="",
+        database="joviancreers"
+    )
 
 @app.route("/")
 def hello_jovian():
-    return render_template('home.html', jobs=jobs, company_name='Jovian')
+    con = get_db_connection()
+    cmd = con.cursor(dictionary=True)
+    cmd.execute("SELECT * FROM jobs")
+    jobs = cmd.fetchall()
+    con.close()
+    
+    return render_template('home.html', jobs=jobs)
 
 @app.route("/api/jobs")
 def list_jobs():
+    con = get_db_connection()
+    cmd = con.cursor(dictionary=True)
+    cmd.execute("SELECT * FROM jobs")
+    jobs = cmd.fetchall()
+    con.close()
+    
     return jsonify(jobs)
 
-@app.route("/jobs/<id>")
-def show_jobs():
-    return jsonify(jobs)
+@app.route("/jobs/<int:id>")
+def show_jobs(id):
+    con = get_db_connection()
+    cmd = con.cursor(dictionary=True)
+    cmd.execute("SELECT * FROM jobs WHERE id = %s", (id,))
+    job = cmd.fetchone()
+    con.close()
+    
+    if job:
+        return render_template('jobpage.html', job=job)
+    else:
+        return "Job Not Found", 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

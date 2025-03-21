@@ -6,14 +6,12 @@
         <div>
             <b>Location:{{jobs['location']}}</b>
         </div>
-        {% if 'Salary' in jobs %}
         <div>
-            <b>Salary:{{jobs['salary']}}</b>
+            <b>Salary:{{jobs['currency']}}{{jobs['salary']}}</b>
         </div>
-        {% endif %}
     </div>
     <div class="col-2">
-        <a href="mailto:hello@jovian.ai?subject=Application%20for%20{{jobs['title']}}&body=My%20name%3A%3Cyour%20name%20here%3E%0D%0AMy%20Resume%20link%3A%3Cresume%20link%3E%0D%0AMy%20linkedin%20link%3A%3Clinkedin%20ln%3E"
+        <a href="/jobs/{{jobs['id']}}"
          type="button"
          class="btn btn-outline-primary">Apply
         </a>
