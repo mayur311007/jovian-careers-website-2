@@ -1,43 +1,29 @@
 from flask import Flask, render_template, jsonify
+import mysql.connector
 
 app = Flask(__name__)
 
-JOBS = [
-    {
-        'id': 1,
-        'title': 'Data Analyst',
-        'location': 'Bengaluru, India',
-        'Salary':'Rs. 10,00,000'
-    },
-    {
-        'id': 2,
-        'title': 'Data Scientist',
-        'location': 'Delhi, India',
-        'Salary':'Rs. 15,0,000'
-    },
-    {
-        'id': 3,
-        'title': 'Frontend Engineer',
-        'location': 'Remote',
-        
-    },
-    {
-        'id': 4,
-        'title': 'Backend Engineer',
-        'location': 'San Francisco, USA',
-        'Salary':'$120,000'
-    }
-]
+# Connect to MySQL database
+con = mysql.connector.connect(
+    host="localhost", user="mayur", password="", database="joviancreers")
+cmd = con.cursor(cursor_class=mysql.connector.cursor.MySQLCursorDict)  # Ensure results are returned as dictionaries
+cmd.execute("SELECT * FROM jobs")
+data = cmd.fetchall()
+con.close()
+
+# Convert database rows into a list of job dictionaries
+jobs = []
+for row in data:
+    print("row", row)
+    jobs.append(row)
 
 @app.route("/")
 def hello_jovian():
-    return render_template('home.html',
-                           jobs=JOBS,
-                           company_name='jovian')
+    return render_template('home.html', jobs=jobs, company_name='Jovian')
 
 @app.route("/api/jobs")
 def list_jobs():
-    return jsonify(JOBS)
+    return jsonify(jobs)
 
-if __name__== "__main__":
-    app.run(host='0.0.0.0',debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True)
