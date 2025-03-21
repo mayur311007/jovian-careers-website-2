@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 import mysql.connector
+import mysql
 
 app = Flask(__name__)
 
