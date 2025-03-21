@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify,request
 import mysql.connector
 
 app = Flask(__name__)
@@ -44,6 +44,11 @@ def show_jobs(id):
         return render_template('jobpage.html', job=job)
     else:
         return "Job Not Found", 404
+    
+@app.route("/job/<id>/apply", methods=['post'])
+def apply_to_job(id):
+    data = request.form
+    return jsonify(data)     
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
