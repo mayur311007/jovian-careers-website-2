@@ -7,4 +7,4 @@ cmd.execute("select * from jobs")
 data=cmd.fetchall()
 for row in data:
     print(row)
-con.close()    
+connection.close()    
